@@ -1,0 +1,20 @@
+server {
+	listen 443 ssl;
+	listen [..]:443 ssl;
+
+	server_name ade-beco.42.fr www.ade-beco.42.fr;
+
+	ssl_certificate $CERTS;
+	ssl_certificate_key $KEY_CERTS;
+	ssl_protcol TLSv1.3;
+
+	index index.php;
+	root /var/www/html;
+
+	location ~ /.php$ {
+		try_files $uri =404;
+		fastcgi_pass wordpress:9000;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+	}
+}
