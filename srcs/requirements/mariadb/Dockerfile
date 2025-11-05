@@ -8,8 +8,8 @@ RUN mkdir -p /var/run/mysqlq \
 
 EXPOSE 3306
 
-COPY ./tools/script.sh /usr/local/bin/mariadb.sh
-COPY ./conf/wordpress.sql /usr/local/bin/wordpress.sql
+COPY ./tools/mariadb.sh /usr/local/bin/
+COPY ./conf/wordpress.sql /usr/local/bin/
 RUN chmod +x /usr/local/bin/mariadb.sh
 RUN chmod +x /usr/local/bin/wordpress.sql
 
