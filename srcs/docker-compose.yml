@@ -23,28 +23,30 @@ networks :
         driver : bridge
 
 services :
-    # mariadb :
-    #     container_name : mariadb
-    #     build : requirements/mariadb/
-    #     image : mariadb:11.8
-    #     volumes :
-    #         - mariadb:/var/lib/mysql
-    #     env_file :
-    #         - .env
-    #     networks :
-    #         - inception
-    #     restart : always
-    #     # healthcheck :
-    #     #     test : ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-    #     #     interval : 10s
-    #     #     timeout : 5s
-    #     #     retries : 5
+    mariadb :
+        container_name : mariadb
+        build : requirements/mariadb/
+        image : mariadb:11.8
+        volumes :
+            - mariadb:/var/lib/mysql
+        env_file :
+            - .env
+        networks :
+            - inception
+        restart : always
+        depends_on :
+            - nginx
+        # healthcheck :
+        #     test : ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+        #     interval : 10s
+        #     timeout : 5s
+        #     retries : 5
 
     
     wordpress :
         container_name : wordpress
         build : ./requirements/wordpress/
-        image : wordpress:8.2
+        image : wordpress:5.1.1-fpm-alpine
         networks :
             - inception
         volumes :
@@ -52,8 +54,9 @@ services :
         env_file :
             - .env
         restart : always
-        # depends_on :
-        #     - mariadb
+        depends_on :
+            - mariadb
+            - nginx
 
     nginx :
         container_name : nginx

@@ -2,7 +2,7 @@ FROM debian:trixie
 
 RUN apt -y update && apt -y install mariadb-server mariadb-client && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /var/run/mysqlq \
+RUN mkdir -p /var/run/mysqld \
 	&& chown -R mysql:mysql /var/run/mysqld \
 	&& chmod 777 /var/run/mysqld
 
