@@ -1,19 +1,34 @@
-#!/bin/bash
+#!/bin/sh
 
-service mysql start
+mysql_install_db
 
-echo "CREATE DATABASE IF NO EXITS $DB_NAME ;" > db.sql
-# create user and assign password
-echo "CREATE USER IF NOT EXISTS '$DB_USER'@'%' IDENTIFIED BY '$DB_PWD' ;" >> db.sql
-# give all privileges at user
-echo "GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER'@'%' ;" >> db.sql
-# change default root password
-echo "ALTER USER 'root'@'localhost' IDENTIFIED BY '$MARIADB_ROOT_PASSWORD' ;" >> db.sql
-# update user tables
-echo "FLUSH PRIVILEGES;" >> db.sql
+/etc/init.d/mysql start
 
-mysql < db.sql
+if [ -d "/var/lib/mysql/$MYSQL_DATABASE" ]
+then 
 
-kill $(cat /var/run/mysqld/mysqld.pid)
+	echo "Database already exists"
+else
 
-mysql
+mysql_secure_installation << _EOF_
+
+Y
+root4life
+root4life
+Y
+n
+Y
+Y
+_EOF_
+
+echo "GRANT ALL ON *.* TO 'root'@'%' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD'; FLUSH PRIVILEGES;" | mysql -uroot
+
+echo "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE; GRANT ALL ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD'; FLUSH PRIVILEGES;" | mysql -u root
+
+mysql -uroot -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE < /usr/local/bin/wordpress.sql
+
+fi
+
+/etc/init.d/mysql stop
+
+exec "$@"
