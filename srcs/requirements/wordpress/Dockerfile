@@ -10,11 +10,11 @@ RUN apt-get update && apt-get -y install wget curl bash php php-cgi php-mysql ph
 
 COPY ./conf/www.conf /etc/php/8.4/fpm/pool.d/www.conf
 
-RUN mkdir /run/php
+RUN mkdir -p /run/php
 
-COPY ./tools/script.sh /usr/local/bin
-RUN chmod +x /usr/local/bin/script.sh
-ENTRYPOINT [ "/usr/local/bin/script.sh" ]
+COPY ./tools/wordpress.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/wordpress.sh
+ENTRYPOINT [ "/usr/local/bin/wordpress.sh" ]
 
 WORKDIR /var/www/html/
 
