@@ -1,34 +1,34 @@
 #!/bin/bash
 
-mysql_install_db
+# Initialiser la base de données si nécessaire
+if [ ! -d "/var/lib/mysql/mysql" ]; then
+	echo "Initialisation de la base de données..."
+	mysql_install_db --user=mysql --datadir=/var/lib/mysql
+	
+	# Démarrer MySQL temporairement
+	mysqld --user=mysql --datadir=/var/lib/mysql --skip-networking &
+	pid="$!"
 
-/etc/init.d/mysql start
+	# Attendre que MySQL soit prêt
+	for i in {30..0}; do
+	    if echo 'SELECT 1' | mysql &> /dev/null; then
+	        break
+	    fi
+	    sleep 1
+	done
 
-if [ -d "/var/lib/mysql/$MYSQL_DATABASE" ]
-then 
+	# Créer la base et l'utilisateur
+	mysql <<-EOSQL
+	    CREATE DATABASE IF NOT EXISTS ${DB_NAME};
+	    CREATE USER IF NOT EXISTS '${DB_USER}'@'%' IDENTIFIED BY '${DB_PWD}';
+	    GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'%';
+	    ALTER USER 'root'@'localhost' IDENTIFIED BY '${MARIADB_ROOT_PASSWORD}';
+	    FLUSH PRIVILEGES;
+		EOSQL
 
-	echo "Database already exists"
-else
-
-mysql_secure_installation << _EOF_
-
-Y
-root4life
-root4life
-Y
-n
-Y
-Y
-_EOF_
-
-echo "GRANT ALL ON *.* TO 'root'@'%' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD'; FLUSH PRIVILEGES;" | mysql -uroot
-
-echo "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE; GRANT ALL ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD'; FLUSH PRIVILEGES;" | mysql -u root
-
-mysql -uroot -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE < /usr/local/bin/wordpress.sql
-
+	# Arrêter MySQL temporaire
+	kill -s TERM "$pid"
+	wait "$pid"
 fi
 
-/etc/init.d/mysql stop
-
-exec "$@"
+exec mysqld --user=mysql --datadir=/var/lib/mysql --bind-address=0.0.0.0
