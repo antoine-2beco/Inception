@@ -6,11 +6,14 @@
 #    By: ade-beco <ade-beco@student.s19.be>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/15 17:26:50 by ade-beco          #+#    #+#              #
-#    Updated: 2025/10/15 18:19:57 by ade-beco         ###   ########.fr        #
+#    Updated: 2025/11/17 16:54:23 by ade-beco         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-all : up
+all : build up
+
+build :
+	@docker-compose -f srcs/docker-compose.yml build --no-cache
 
 up :
 	@docker-compose -f srcs/docker-compose.yml up -d

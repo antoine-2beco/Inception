@@ -14,6 +14,6 @@ COPY ./tools/script.sh ./
 
 COPY ./tools/wp-config.php ./
 
-ENTRYPOINT [ "sh", "./start.sh" ]
+ENTRYPOINT [ "sh", "./script.sh" ]
 
 EXPOSE 9000

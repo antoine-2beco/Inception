@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ ! -f /etc/ssl/certs/nginx-selfsigned.crt ]; then
   openssl req -x509 -nodes -days 365 \
