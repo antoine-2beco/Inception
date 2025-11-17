@@ -1,23 +1,19 @@
-FROM debian:trixie
+FROM alpine:3.22
 
-RUN apt-get update && apt-get -y install wget curl bash php php-cgi php-mysql php-fpm \
-	php-pdo php-gd php-cli php-mbstring && rm -rf /var/lib/apt/lists/*
+RUN apk update && apk upgrade && apk add --no-cache php php-cli php-mysqli php-gd php-mbstring php-xml php-phar php-fpm php-redis php-ctype wget mariadb-client envsubst
 
-# install wp-cli -> to manage wp by terminal
-# RUN	curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
-# 	&& chmod +x wp-cli.phar \
-# 	&& mv wp-cli.phar /usr/local/bin/wp
+RUN adduser -S wordpress-fpm && addgroup -S wordpress-fpm 
 
-COPY ./conf/www.conf /etc/php/8.4/fpm/pool.d/www.conf
+RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar --output-document=/usr/local/bin/wp && chmod -R +x /usr/local/bin/wp
 
-RUN mkdir -p /run/php
+RUN mkdir -p /var/www/html && chmod 755 /var/www/html
 
-COPY ./tools/wordpress.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/wordpress.sh
-ENTRYPOINT [ "/usr/local/bin/wordpress.sh" ]
+COPY ./tools/www.conf /etc/php83/php-fpm.d/www.conf
 
-WORKDIR /var/www/html/
+COPY ./tools/script.sh ./
+
+COPY ./tools/wp-config.php ./
+
+ENTRYPOINT [ "sh", "./start.sh" ]
 
 EXPOSE 9000
-
-CMD [ "/usr/sbin/php-fpm8.4", "-F" ]

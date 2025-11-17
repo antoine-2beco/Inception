@@ -1,8 +1,9 @@
-FROM debian:trixie
+FROM alpine:3.22
 
-RUN apt -y update && apt install -y nginx && apt install -y openssl
+RUN apk update && apk upgrade && apk add --no-cache nginx openssl
 
-RUN mkdir /etc/nginx/ssl
+RUN mkdir -p /etc/ssl/private /etc/ssl/certs
+
 # create de self-signed ssl certificate
 # -x509 : generate a auto signed certificate
 # -nodes : do not encrypt the password
@@ -13,13 +14,11 @@ RUN mkdir /etc/nginx/ssl
 # -subj : informations about the certificate
 RUN openssl req -x509 -nodes -days 365 \
  -newkey rsa:2048 \
- -keyout $KEY_CERTS \
- -out $CERTS \
+ -keyout /etc/ssl/private/nginx_selfsigned.key \
+ -out /etc/ssl/certs/nginx-selfsigned.crt \
  -subj "/C=BE/L=BX/O=42Belgium/OU=student/CN=ade-beco.42.fr"
 
-COPY ./conf/default /etc/nginx/conf.d
-
-RUN mkdir -p /run/nginx
+COPY ./conf/default.conf /etc/nginx/http.d/default.conf
 
 EXPOSE 443
 

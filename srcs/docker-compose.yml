@@ -25,7 +25,8 @@ networks :
 services :
     mariadb :
         container_name : mariadb
-        build : requirements/mariadb/
+        image : mariadb
+        build : ./requirements/mariadb/
         volumes :
             - mariadb:/var/lib/mysql
         env_file :
@@ -33,32 +34,31 @@ services :
         networks :
             - inception
         restart : unless-stopped
-        # healthcheck :
-        #     test : ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-        #     interval : 10s
-        #     timeout : 5s
-        #     retries : 5
-
     
-    # wordpress :
-    #     container_name : wordpress
-    #     build : ./requirements/wordpress/
-    #     networks :
-    #         - inception
-    #     volumes :
-    #         - wordpress:/var/www/html
-    #     env_file :
-    #         - .env
-    #     restart : always
+    wordpress :
+        container_name : wordpress
+        build : ./requirements/wordpress/
+        image : wordpress
+        networks :
+            - inception
+        volumes :
+            - wordpress:/var/www/html
+        env_file :
+            - .env
+        restart : unless-stopped
+        depends_on :
+            - mariadb
 
-    # nginx :
-    #     container_name : nginx
-    #     build : ./requirements/nginx/
-    #     ports :
-    #         - 443:443
-    #     volumes :
-    #         - wordpress:/var/www/html
-    #     networks :
-    #         - inception
-    #     restart : always
-
+    nginx :
+        container_name : nginx
+        build : ./requirements/nginx/
+        image : nginx
+        ports :
+            - "443:443"
+        volumes :
+            - wordpress:/var/www/html
+        networks :
+            - inception
+        restart : unless-stopped
+        depends_on : 
+            - wordpress
