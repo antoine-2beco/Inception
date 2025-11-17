@@ -2,7 +2,7 @@
 
 if [ ! -f "/var/www/html/wp-config.php" ]; then
     wp core download --allow-root --path="/var/www/html"
-    until mysqladmin ping -h "${DB_HOST}" -u "${DB_USER}" -p"${MARIADB_WP_PASSW}" --silent; do
+    until mariadb-admin ping -h "${DB_HOST}" -u "${DB_USER}" -p"${MARIADB_WP_PASSW}" --silent; do
     printf '.'
     sleep 1
     done
