@@ -10,8 +10,6 @@ if [ ! -f "/var/www/html/wp-config.php" ]; then
 
     chown -R wordpress-fpm:wordpress-fpm /var/www/html
     wp core install --allow-root --url="${NGINX_HOST}" --title="${WP_TITLE}" --admin_user="${WP_ADMIN_USR}" --admin_password="${WP_ADMIN_PWD}" --admin_email="${WP_ADMIN_EMAIL}" --path="/var/www/html" --skip-email
-    wp plugin install redis-cache --activate --path="/var/www/html"
-    wp redis enable --force --path="/var/www/html"
     wp user create "${WP_USER}" "${WP_USER_EMAIL}" --allow-root --role="author" --user_pass="${WP_USER_PWD}" --path="/var/www/html"
     chmod -R 777 /var/www/html
 fi
