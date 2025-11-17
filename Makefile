@@ -6,7 +6,7 @@
 #    By: ade-beco <ade-beco@student.s19.be>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/10/15 17:26:50 by ade-beco          #+#    #+#              #
-#    Updated: 2025/11/17 16:54:23 by ade-beco         ###   ########.fr        #
+#    Updated: 2025/11/17 19:22:45 by ade-beco         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ up :
 	@docker-compose -f srcs/docker-compose.yml up -d
 
 down :
-	@docker-compose -f srcs/docker-compose.yml down
+	@docker-compose -f srcs/docker-compose.yml down -v
 
 start :
 	@docker-compose -f srcs/docker-compose.yml start
