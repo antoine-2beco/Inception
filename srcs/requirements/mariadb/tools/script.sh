@@ -12,9 +12,9 @@ if [ ! -d "/var/lib/mysql/mysql" ]; then
     chown -R mysql:mysql /var/lib/mysql
     mysql_install_db --datadir=/var/lib/mysql --user=mysql > /dev/null
     /usr/bin/mysqld --user=mysql --skip-networking &
-    until mysqladmin ping --silent; do
-    printf '.'
-    sleep 1
+    until mariadb-admin ping --silent; do
+        printf '.'
+        sleep 1
     done
     mariadb -u root -e "DROP DATABASE test;"
     mariadb -u root -e "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('$MARIADB_ROOT_PASSWORD');"
@@ -22,7 +22,7 @@ if [ ! -d "/var/lib/mysql/mysql" ]; then
     mariadb -u root -e "CREATE USER '${DB_USER}'@'%' IDENTIFIED by '${DB_PWD}';"
     mariadb -u root -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'%';"
 	mariadb -u root -e "FLUSH PRIVILEGES;"
-    mysqladmin -u root -p$MARIADB_ROOT_PASSWORD shutdown
+    mariadb-admin -u root -p$MARIADB_ROOT_PASSWORD shutdown
 fi
 
 sed -i 's/bind-address/#bind-address/' /etc/my.cnf.d/mariadb-server.cnf
