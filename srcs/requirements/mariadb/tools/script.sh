@@ -10,7 +10,7 @@ fi
 
 if [ ! -d "/var/lib/mysql/.initialized" ]; then
     chown -R mysql:mysql /var/lib/mysql
-    mysql_install_db --datadir=/var/lib/mysql --user=mysql > /dev/null
+    mariadb-install-db --datadir=/var/lib/mysql --user=mysql > /dev/null
     /usr/bin/mysqld --user=mysql --skip-networking &
     until mariadb-admin ping --silent; do
         printf '.'
