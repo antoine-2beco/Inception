@@ -11,7 +11,7 @@ fi
 if [ ! -d "/var/lib/mysql/.initialized" ]; then
     chown -R mysql:mysql /var/lib/mysql
     mariadb-install-db --datadir=/var/lib/mysql --user=mysql > /dev/null
-    /usr/bin/mysqld --user=mysql --skip-networking &
+    /usr/bin/mariadbd --user=mysql --skip-networking &
     until mariadb-admin ping --silent; do
         printf '.'
         sleep 1
@@ -31,4 +31,4 @@ sed -i 's/bind-address/#bind-address/' /etc/my.cnf.d/mariadb-server.cnf
 sed -i "s|skip-networking|# skip-networking|g" /etc/my.cnf.d/mariadb-server.cnf
 chmod -R 777 /var/lib/mysql
 
-exec /usr/bin/mysqld --user=mysql
+exec /usr/bin/mariadbd --user=mysql

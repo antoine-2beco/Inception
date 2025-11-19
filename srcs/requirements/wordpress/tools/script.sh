@@ -1,10 +1,7 @@
 #!/bin/bash
 
 if [ ! -f "/var/www/html/wp-config.php" ]; then
-    echo "-- INSTALLING WORDPRESS --"
-    # Increase size of php memory
     php -d memory_limit=512M /usr/local/bin/wp core download --allow-root --path="/var/www/html"
-    wp core download --allow-root --path="/var/www/html"
     until mariadb-admin ping -h "${DB_HOST}" -u "${DB_USER}" -p"${DB_PWD}" --silent; do
     printf '.'
     sleep 1
