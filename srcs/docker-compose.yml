@@ -3,7 +3,7 @@ volumes :
         name : mariadb
         driver : local
         driver_opts :
-            device : /Users/antoinedb/Desktop/dev/inception/data/mariadb/
+            device : /home/adebeco/prod
             o : bind
             type : none
 
@@ -11,7 +11,7 @@ volumes :
         name : wordpress
         driver : local
         driver_opts :
-            device : /Users/antoinedb/Desktop/dev/inception/data/wordpress/
+            device : /home/adebeco/prod
             o : bind
             type : none
 
